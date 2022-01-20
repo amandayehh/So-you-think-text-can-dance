@@ -1,11 +1,11 @@
 var fft, amplitude, peakDetect, spectrum, level, treble, highMid, mid, lowMid, bass, centroid;
 var pBass, pLowMid, pMid, pHighMid, pTreble;
-var casl;
+var casl, size;
 
 function preload() {
   song = loadSound('iFeel.mp3');
 
-  variable = select('.variable');
+  variable = selectAll('.variable');
   playButton = select('.play_button')
 }
 
@@ -17,6 +17,7 @@ function setup() {
   amplitude = new p5.Amplitude();
   peakDetect = new p5.PeakDetect();
 
+  pLevel = 0;
   pBass = 0;
   pLowMid = 0;
   pMid = 0;
@@ -28,6 +29,7 @@ function setup() {
 function draw() {
 
   spectrum = fft.analyze();
+  pLevel = level;
   level = amplitude.getLevel();
 
   pTreble = treble;
@@ -42,12 +44,24 @@ function draw() {
   bass = fft.getEnergy('bass');
 
 
-  variable.style('font-size', '200');
-  variable.style('font-weight', '100');
+  size = map(level, 0, 0.4, 50, 200);
+  pSize = map(level, 0, 0.4, 50, 100);
+
+
+  //variable.style('font-weight', '100');
   casl = map(level, 0, 0.4, 0, 1);
   //casl = 0.5
-  variable.style('font-variation-settings', " 'CASL' " + casl);
+  // for (let i = 0; i < variable.length; i++) {
+  //   console.log(variable[i]);
 
+  //   variable[i].style('font-size', size);
+  //   //variable[i].style('font-size', 200);
+
+  //   //    variable[i].style('font-variation-settings', " 'CASL' " + casl);
+  // }
+  variable[0].style('font-size', size);
+
+  variable[1].style('font-size', pSize - 10);
 
 }
 

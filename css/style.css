@@ -1,4 +1,7 @@
 .variable {
     font-family: 'Recursive', sans-serif;
-    font-size: 100px;
+}
+
+.play_button {
+    margin-bottom: 50px;
 }
