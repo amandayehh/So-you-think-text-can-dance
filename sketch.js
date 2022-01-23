@@ -1,16 +1,18 @@
 var fft, amplitude, peakDetect, spectrum, level, treble, highMid, mid, lowMid, bass, centroid;
 var pBass, pLowMid, pMid, pHighMid, pTreble;
 var casl, size;
+var chars;
 
 function preload() {
-  song = loadSound('iFeel.mp3');
+  song = loadSound('doubt.mp3');
 
-  variable = selectAll('.variable');
+  variable = select('.variable');
   playButton = select('.play_button')
+  text = select('.text')
 }
 
 function setup() {
-  noCanvas();
+  //  noCanvas();
   playButton.mousePressed(togglePlaying)
 
   fft = new p5.FFT();
@@ -24,9 +26,19 @@ function setup() {
   pHighMid = 0;
   pTreble = 0;
 
+  //chars = split(variable, '');
+  chars = variable.html().split('')
+  //console.log(variable.html())
+  console.log(chars);
+  let span = createSpan(chars[0]);
+  span.parent(text)
+  for (let i = 0; i < chars.length; i++) {
+
+  }
 }
 
 function draw() {
+  background(220);
 
   spectrum = fft.analyze();
   pLevel = level;
@@ -43,10 +55,33 @@ function draw() {
   pBass = bass;
   bass = fft.getEnergy('bass');
 
-
   size = map(level, 0, 0.4, 50, 200);
   pSize = map(level, 0, 0.4, 50, 100);
 
+  // for (let i = 0; i < spectrum.length; i++) {
+  //   let x = map(i, 0, spectrum.length, 0, width);
+  //   let h = -height + map(spectrum[i], 0, 255, height, 0);
+  //   rect(x, height, width / spectrum.length, h)
+  //   //console.log(h);
+
+
+  // }
+  let h = map(spectrum[500], 0, 255, -800, 1000);
+  //console.log(h)
+  // variable.style('font-variation-settings', " 'SCAN' " + 100);
+
+
+  let waveform = fft.waveform();
+  noFill();
+  beginShape();
+  stroke(20);
+  for (let i = 0; i < waveform.length; i++) {
+    let x = map(i, 0, waveform.length, 0, width);
+    let y = map(waveform[i], -1, 1, 0, height);
+    vertex(x, y);
+    variable.style('font-variation-settings', " 'BLED' " + y + ", 'SCAN' " + h);
+  }
+  endShape();
 
   //variable.style('font-weight', '100');
   casl = map(level, 0, 0.4, 0, 1);
@@ -59,9 +94,8 @@ function draw() {
 
   //   //    variable[i].style('font-variation-settings', " 'CASL' " + casl);
   // }
-  variable[0].style('font-size', size);
 
-  variable[1].style('font-size', pSize - 10);
+  //variable[1].style('font-size', pSize - 10);
 
 }
 
