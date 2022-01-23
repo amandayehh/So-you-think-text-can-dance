@@ -1,8 +1,15 @@
-.variable {
-    font-family: 'Sixtyfour', sans-serif;
-    font-size: 100px;
+.text {
+    font-family: 'Science Gothic', sans-serif;
 
+    font-size: 100px;
+    height: 500px;
+    display: flex;
+    align-items: baseline;
+    align-content: center;
+    margin-top: 100px;
 }
+
+.text>span {}
 
 .play_button {
     margin-bottom: 50px;
