@@ -1,18 +1,17 @@
 var fft, amplitude, peakDetect, spectrum, level, treble, highMid, mid, lowMid, bass, centroid;
 var pBass, pLowMid, pMid, pHighMid, pTreble;
 var casl, size;
-var chars, FFTchunks;
+var chars, FFTchunks, waveformChunks;
 
 function preload() {
-  song = loadSound('iFeel.mp3');
-
+  song = loadSound('songs/doubt.mp3');
   variable = select('.variable');
   playButton = select('.play_button')
   text = select('.text')
 }
 
 function setup() {
-  //  noCanvas();
+  //noCanvas();
   playButton.mousePressed(togglePlaying)
 
   fft = new p5.FFT();
@@ -33,15 +32,18 @@ function setup() {
   //console.log(chars);
   // let span = createSpan(chars[0]);
   for (let i = 0; i < chars.length; i++) {
-    let span = createSpan(chars[i]);
-    span.parent(text);
+    if (chars[i] != " ") {
+      let span = createSpan(chars[i]);
+      span.parent(text);
+    }
   }
+
   //console.log(text.child()[0].style.);
   // console.log(text.child())
 }
 
 function draw() {
-  background(220);
+  //background(220);
 
   spectrum = fft.analyze();
   pLevel = level;
@@ -58,72 +60,47 @@ function draw() {
   pBass = bass;
   bass = fft.getEnergy('bass');
 
-  size = map(level, 0, 0.4, 50, 200);
-  pSize = map(level, 0, 0.4, 50, 100);
-
-  // for (let i = 0; i < spectrum.length; i++) {
-  //   let x = map(i, 0, spectrum.length, 0, width);
-  //   let h = -height + map(spectrum[i], 0, 255, height, 0);
-  //   rect(x, height, width / spectrum.length, h)
-  //   //console.log(h);
+  //size = map(level, 0, 0.4, 50, 200);
+  //pSize = map(level, 0, 0.4, 50, 100);
 
 
-  // }
+  // waveform calculations
+  let waveform = fft.waveform();
 
-  //console.log(h)
-  // variable.style('font-variation-settings', " 'SCAN' " + 100);
+  waveformChunks = splitIntoN(waveform, text.child().length)
+  let waveformAvg = [];
+  for (let i = 0; i < waveformChunks.length; i++) {
+    waveformAvg.push(calculateAvg(waveformChunks[i]));
+  }
 
 
-  // let waveform = fft.waveform();
-  // noFill();
-  // beginShape();
-  // stroke(20);
-  // for (let i = 0; i < waveform.length; i++) {
-  //   let x = map(i, 0, waveform.length, 0, width);
-  //   let y = map(waveform[i], -1, 1, 0, height);
-  //   vertex(x, y);
-  //   variable.style('font-variation-settings', " 'BLED' " + y + ", 'SCAN' " + h);
-  // }
-  // endShape();
-
-  //variable.style('font-weight', '100');
+  //FFT spectrum calculations
 
   FFTchunks = splitIntoN(spectrum, text.child().length)
-  //console.log(FFTchunks)
 
-
-
-  //console.log(spectrum)
-  //console.log(getAvg(FFTchunks[0]));
   let FFTavg = [];
   for (let i = 0; i < FFTchunks.length; i++) {
     FFTavg.push(calculateAvg(FFTchunks[i]));
   }
 
+
+  //Text styling
   for (let i = 0; i < text.child().length; i++) {
-    let wdth = map(FFTavg[i], 0, 255, 50, 200);
-    let size = map(FFTavg[i], 0, 255, 100, 700);
-    text.child()[i].style.fontVariationSettings = "'wdth' " + wdth;
-    //  text.child()[i].style.fontSize = size;
+    let bled = map(FFTavg[i], 0, 255, 0, 500);
+    let scan = map(waveformAvg[i], 0, 1, -800, 1000);
+
+
+    text.child()[i].style.fontVariationSettings = "'SCAN' " + scan + ", 'BLED' " + bled;
+
+
+    let size = map(highMid, 0, 255, 200, 250);
+    text.child()[i].style.fontSize = size;
+
   }
-
-  //console.log(FFTavg)
-  //console.log(text.child().length)
-  //casl = 0.5
-  // for (let i = 0; i < variable.length; i++) {
-  //   console.log(variable[i]);
-
-  //   variable[i].style('font-size', size);
-  //   //variable[i].style('font-size', 200);
-
-  //   //    variable[i].style('font-variation-settings', " 'CASL' " + casl);
-  // }
-
-  //variable[1].style('font-size', pSize - 10);
-
 
 }
 
+//Toggle playing, obvi
 function togglePlaying() {
   if (!song.isPlaying()) {
     song.play();
@@ -135,14 +112,7 @@ function togglePlaying() {
   }
 }
 
-// function spliceIntoChunks(arr, chunkSize) {
-//   const res = [];
-//   while (arr.length > 0) {
-//     const chunk = arr.splice(0, chunkSize);
-//     res.push(chunk);
-//   }
-//   return res;
-// }
+//Utility
 
 function splitIntoN(arr, num) {
   const res = [];
@@ -154,17 +124,6 @@ function splitIntoN(arr, num) {
   return res;
 }
 
-// function getAvg(arr) {
-//   let total = [];
-//   for (let i = 0; i < arr.length; i++) {
-//     total += arr[i];
-//     //console.log(arr[i])
-
-//   }
-//   let avg = total / arr.length
-//   // console.log(avg)
-//   return avg;
-// }
 function calculateAvg(array) {
   return array.reduce((a, b) => a + b) / array.length;
 }

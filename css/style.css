@@ -1,15 +1,19 @@
 .text {
-    font-family: 'Science Gothic', sans-serif;
-
-    font-size: 100px;
+    font-family: 'Workbench', sans-serif;
     height: 500px;
+    font-size: 200px;
     display: flex;
-    align-items: baseline;
+    align-items: flex-end;
     align-content: center;
+    justify-content: center;
     margin-top: 100px;
+    text-align: center;
+    /* font-variation-settings: 'yest'0; */
 }
 
-.text>span {}
+.text>span {
+    align-items: baseline;
+}
 
 .play_button {
     margin-bottom: 50px;
